@@ -3,10 +3,14 @@ import {withRouter} from "react-router";
 
 import {inject, observer} from "mobx-react";
 
+import {Col, Row} from "antd";
+
 import {Form} from "../../../ui/Form";
 import Input from "../../../ui/Input";
 
-import {FormWrapper, Submit, Title} from "../../../../styles/admin";
+import {FormWrapper, Title} from "../../../../styles/admin";
+
+import Submit from "../../../../styles/ui/Submit";
 
 @withRouter
 @inject(provider => ({store: provider.store.root.authStore}))
@@ -25,8 +29,16 @@ class AdminForm extends Component {
       <FormWrapper>
         <Title>Admin</Title>
         <Form config={store.fields} onFinish={this.handleFinish}>
-          <Input name="username"/>
-          <Input name="password"/>
+          <Row gutter={[16, 16]}>
+            <Col span={24}>
+              <Input name="username"/>
+            </Col>
+          </Row>
+          <Row gutter={[16, 16]}>
+            <Col span={24}>
+              <Input name="password"/>
+            </Col>
+          </Row>
           <Submit type="primary" htmlType="submit">Login</Submit>
         </Form>
       </FormWrapper>

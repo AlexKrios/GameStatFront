@@ -27,8 +27,6 @@ export const Title = styled.h2`
 `;
 
 export const Submit = styled(Button)`
-    width: 150px;
     margin: 25px auto 0;
-    padding: 10px;
     display: block;
 `;

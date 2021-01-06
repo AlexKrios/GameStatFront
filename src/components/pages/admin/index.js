@@ -2,50 +2,76 @@ import React, {Component} from "react";
 
 import {inject, observer} from "mobx-react";
 
-import Protected from "../../Protected";
+import {Table, Modal, message, Button} from "antd";
 
-import {CustomTable} from "../../../styles/table";
+import Protected from "../../Protected";
 
 import {Container} from "../../../styles/container";
 
+import {COLUMNS} from "./columns";
+
+import CreateUserModal from "../../modals/CreateUserModal";
+import UpdateUserModal from "../../modals/UpdateUserModal";
+
 @Protected()
-@inject(provider => ({adminStore: provider.store.root.adminStore}))
+@inject(provider => ({
+  getUsersStore: provider.store.root.getUsersStore,
+  createUserStore: provider.store.root.createUserStore,
+  updateUserStore: provider.store.root.updateUserStore,
+  deleteUserStore: provider.store.root.deleteUserStore
+}))
 @observer
 class AdminPanel extends Component {
   componentDidMount() {
-    const {adminStore} = this.props;
+    const {getUsersStore} = this.props;
 
-    adminStore.loadUsers();
+    getUsersStore.loadUsers();
+  }
+
+  columns = COLUMNS.concat({
+    title: "Actions",
+    dataIndex: "actions",
+    render: (_, row) => {
+      const {updateUserStore} = this.props;
+
+      return (
+        <>
+          <a onClick={() => updateUserStore.setModalData("update", row._id)}>Update</a>
+          <a onClick={() => this.handleDelete(row)}>Delete</a>
+        </>
+      );
+    }
+  });
+
+  handleDelete = row => {
+    const {getUsersStore, deleteUserStore} = this.props;
+
+    Modal.confirm({
+      title: "Are you sure?",
+      content: `This user ${row.username} will be permanently deleted`,
+      icon: false,
+      onOk() {
+        deleteUserStore.deleteUser(row._id)
+          .then(() => getUsersStore.loadUsers())
+          .then(() => message.success("User deleted", 2));
+      }
+    });
   }
 
   render() {
-    const {users} = this.props.adminStore;
+    const {getUsersStore, createUserStore} = this.props;
+    const {users} = getUsersStore;
 
     return (
       <Container>
         <h1>Users</h1>
-        <CustomTable columns={columns} dataSource={users} pagination={false}/>
+        <Button onClick={() => createUserStore.setModalVisible("create")}>Create User</Button>
+        <Table columns={this.columns} dataSource={users} pagination={false} bordered/>
+        <CreateUserModal/>
+        <UpdateUserModal/>
       </Container>
     );
   }
 }
-
-const columns = [
-  {
-    title: 'User Name',
-    dataIndex: 'username',
-    key: 'name'
-  },
-  {
-    title: 'Age',
-    dataIndex: 'age',
-    key: 'age',
-  },
-  {
-    title: 'Email',
-    dataIndex: 'email',
-    key: 'email',
-  }
-];
 
 export default AdminPanel;

@@ -3,6 +3,8 @@ import {action, makeObservable, observable} from "mobx";
 export default class FieldObject {
   name;
 
+  @observable initialValue;
+
   @observable type;
 
   @observable placeholder;
@@ -18,12 +20,18 @@ export default class FieldObject {
   constructor(name, config) {
     makeObservable(this);
 
-    const {type, placeholder, rules} = config;
+    const {type, placeholder, rules, initialValue} = config;
 
     this.name = name;
     this.type = type;
     this.placeholder = placeholder;
     this.rules = rules;
+    this.initialValue = initialValue;
+  }
+
+  @action
+  setInitialValue(value) {
+    this.initialValue = value;
   }
 
   @action

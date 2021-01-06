@@ -55,4 +55,8 @@ export default class AuthStore extends AbstractFormStore {
         .finally(() => this.setSubmitting(false));
     });
   }
+
+  logout() {
+    this.setToken(null);
+  }
 }

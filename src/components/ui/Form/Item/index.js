@@ -4,20 +4,26 @@ import {observer} from "mobx-react";
 
 import {FormContext} from "../../../../contexts/FormContext";
 
-import {ItemStyled} from "./style";
+import {ItemStyled} from "../../../../styles/ui/Form/Item";
 
 @observer
 class Item extends Component {
   static contextType = FormContext;
 
   render() {
-    const {name, children} = this.props;
+    const {name, value, children} = this.props;
     const {config} = this.context;
 
     const {rules, validateStatus, help} = config.get(name);
 
     return (
-      <ItemStyled name={name} rules={rules} validateStatus={validateStatus} help={help}>
+      <ItemStyled
+        name={name}
+        value={value}
+        rules={rules}
+        validateStatus={validateStatus}
+        help={help}
+      >
         {children}
       </ItemStyled>
     );
